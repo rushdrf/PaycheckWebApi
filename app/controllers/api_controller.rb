@@ -14,6 +14,13 @@ class ApiController < ApplicationController
                 "monthly_income_tax": to_2decimal(model.getMonthlyTaxAmount),
                 "net_monthly_income": to_2decimal(model.getMontlyNetSalary),
                 }, status: :created
+
+                employee_salary = EmployeeSalaryTab.new
+                employee_salary.Timestamp = Time.now.inspect
+                employee_salary.EmployeeName = model.getName
+                employee_salary.AnnualSalary = model.getAnnualSalary
+                employee_salary.MonthlyIncomeTax = model.getMonthlyTaxAmount
+                employee_salary.save
         end
 
     end
@@ -21,8 +28,8 @@ class ApiController < ApplicationController
     def to_2decimal(value)
         return sprintf("%.2f", value)
     end
-
     private :to_2decimal
+    
 end
 
 class PaycheckModel
@@ -34,6 +41,10 @@ class PaycheckModel
 
     def getName
         return @name
+    end
+
+    def getAnnualSalary
+        return @yearlySalary.to_f
     end
 
     def getTaxPercentage
@@ -49,11 +60,11 @@ class PaycheckModel
 
     def getTaxableAmount
         result = case @yearlySalary
-            when 0..20000 then 0
-            when 20001..40000 then @yearlySalary - 20000
-            when 40001..80000 then @yearlySalary - 40000
-            when 80001..180000 then @yearlySalary - 80000
-            else @yearlySalary - 180000
+            when 0..20000 then 0 * getTaxPercentage()
+            when 20001..40000 then (@yearlySalary - 20000) * getTaxPercentage()
+            when 40001..80000 then (@yearlySalary - 40000) * getTaxPercentage()
+            when 80001..180000 then (@yearlySalary - 80000) * getTaxPercentage()
+            else (@yearlySalary - 180000) * getTaxPercentage()
         end
         return result
     end

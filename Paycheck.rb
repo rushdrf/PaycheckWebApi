@@ -22,11 +22,11 @@ class PaycheckModel
 
     def getTaxableAmount
         result = case @yearlySalary
-            when 0..20000 then 0
-            when 20001..40000 then @yearlySalary - 20000
-            when 40001..80000 then @yearlySalary - 40000
-            when 80001..180000 then @yearlySalary - 80000
-            else @yearlySalary - 180000
+            when 0..20000 then 0 * getTaxPercentage()
+            when 20001..40000 then (@yearlySalary - 20000) * getTaxPercentage()
+            when 40001..80000 then (@yearlySalary - 40000) * getTaxPercentage()
+            when 80001..180000 then (@yearlySalary - 80000) * getTaxPercentage()
+            else (@yearlySalary - 180000) * getTaxPercentage()
         end
         return result
     end
